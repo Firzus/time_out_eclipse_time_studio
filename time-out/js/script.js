@@ -21,40 +21,32 @@ var game = new Phaser.Game(config);
 function preload ()
 {
     this.load.image('background', 'assets/bg.png');
-    this.load.image('base_tiles', 'assets/map.png');
-    this.load.tilemapTiledJSON('tilemap', 'assets/map.json');
+
+    this.load.image('asset_map', 'assets/asset_map.png')
+
+    this.load.tilemapTiledJSON('tilemap', 'projet_map.json')
 }
 
 var bg;
-var tileset;
-var layer;
 
 function create ()
 {
     this.add.image(0, 0, 'background').setOrigin(0, 0);
-    //bg.fixedToCamera = true;
+ 
+    const map = this.add.tilemap({key:'tilemap'});
+ 
+    const tileset = map.addTilesetImage('asset_map', 'asset_map');
+ 
+    map.createLayer('1', tileset);
 
-    this.add.image(0, 0, 'base_tiles');
-    //map.setCollisionByExclusion([ 13, 14, 15, 16, 46, 47, 48, 49, 50, 51 ]); SET COLLISION
+    map.createLayer('2', tileset);
 
-    // create the Tilemap
-    const map = this.make.tilemap({ key: 'tilemap' })
-
-    // add the tileset image we are using
-	const tileset = map.addTilesetImage('standard_tiles', 'base_tiles')
-
-    // create the layers we want in the right order
-	map.createStaticLayer('Background', tileset)
-
-    // "Ground" layer will be on top of "Background" layer
-	map.createStaticLayer('Ground', tileset)
-
-    // the remaining tile layers ...
+    map.createLayer('3', tileset);
 }
 
 function update ()
 {
-
+    
 }
 
 function render ()
