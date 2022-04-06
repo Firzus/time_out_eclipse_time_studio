@@ -25,6 +25,8 @@ function preload ()
     this.load.image('tiles', 'assets/asset_map.png')
 
     this.load.tilemapTiledJSON('test', 'assets/projet_map.json')
+
+    this.load.image("asset_map_perso", "character/asset_map_perso.png" )
 }
 
 function create ()
@@ -42,6 +44,8 @@ function create ()
     const collision = map.createLayer('3', tileset);
 
     collision.setCollisionByExclusion([ 37 ]);
+
+    var characterSprite=this.add.sprite(300, 300, "asset_map_perso")
 
 }
 
