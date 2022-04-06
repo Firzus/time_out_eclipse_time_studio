@@ -2,7 +2,6 @@ var config = {
     type: Phaser.AUTO,
     width: 1920,
     height: 1080,
-    scale: { zoom: 2 },
     physics: {
         default: 'arcade',
         arcade: {
@@ -42,14 +41,8 @@ function create ()
 
     const collision = map.createLayer('3', tileset);
 
-    collision.setCollisionByProperty({ collides : true})
-    
-    const debugGraphics = this.add.graphics().setAlpha(0.7)
-    collision.renderDebug(debugGraphics, {
-        tileColor: null,
-        collidingTileColor: new Phaser.Display.Color(243, 234, 48, 255),
-        faceColor: new Phaser.Display.Color(40, 39, 37, 255)
-    })
+    collision.setCollisionByExclusion([ 37 ]);
+
 }
 
 function update ()
