@@ -3,6 +3,7 @@ var config = {
     width: 1920,
     height: 1080,
     physics: {
+        gravity: { y: 0 }, // Top down game, so no gravity
         default: 'arcade',
         arcade: {
             debug: false
@@ -20,18 +21,21 @@ var game = new Phaser.Game(config);
 
 function preload ()
 {
-    this.load.image('background', 'assets/bg.png');
+    this.load.multiatlas('background', 'assets/bg.json', 'assets');
 
-    this.load.image('tiles', 'assets/asset_map.png')
+    this.load.image('tiles', 'assets/asset_map.png');
 
-    this.load.tilemapTiledJSON('test', 'assets/projet_map.json')
+    this.load.tilemapTiledJSON('test', 'assets/projet_map.json');
 
-    this.load.image("asset_map_perso", "character/asset_map_perso.png" )
+    this.load.atlas('player_back', 'assets/character/main/image/player_back.png', 'assets/character/main/json/player_back.json');
+    this.load.atlas('player_front', 'assets/character/main/image/player_front.png', 'assets/character/main/json/player_front.json');
+    this.load.atlas('player_left', 'assets/character/main/image/player_left.png', 'assets/character/main/json/player_left.json');
+    this.load.atlas('player_right', 'assets/character/main/image/player_right.png', 'assets/character/main/json/player_right.json');
 }
 
 function create ()
 {
-    this.add.image(0, 0, 'background').setOrigin(0, 0);
+    var background = this.add.sprite(0, 0, 'background', 'bg.png');
  
     const map = this.make.tilemap({key:'test'});
  
@@ -45,7 +49,7 @@ function create ()
 
     collision.setCollisionByExclusion([ 37 ]);
 
-    var characterSprite=this.add.sprite(300, 300, "asset_map_perso")
+    const main = this.add.sprite(200, 200, 'player_front', 'player_front.png')
 
 }
 
