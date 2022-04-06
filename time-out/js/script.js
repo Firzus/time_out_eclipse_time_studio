@@ -21,9 +21,11 @@ var game = new Phaser.Game(config);
 function preload ()
 {
     this.load.image('background', 'assets/bg.png');
+    this.load.tilemap('level1', 'assets/map.json', null, Phaser.Tilemap.TILED_JSON);
 }
 
-var bg
+var bg;
+var map;
 
 function create ()
 {
