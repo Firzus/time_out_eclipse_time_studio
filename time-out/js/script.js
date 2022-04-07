@@ -25,6 +25,8 @@ let cursors;
 let player;
 let showDebug = false;
 
+var haveKey; //variable object recupérable
+
 function preload() {
     this.load.multiatlas('background', 'assets/bg.json', 'assets');
 
@@ -33,8 +35,11 @@ function preload() {
     this.load.tilemapTiledJSON('test', 'assets/projet_map.json');
 
     this.load.atlas("player", "assets/character/main/image/player.png", "assets/character/main/json/player.json");
-
+    
     this.load.image('minuteur', 'assets/minuteur/minuteur.png');
+
+    this.load.image('cle', 'assets/props/Cle_blanche.png');         //objet recupérable
+    this.load.image('porte_ferme', 'assets/props/porte_ferme.png');     //porte ferme a clé
 }
 
 function create() {
@@ -51,6 +56,7 @@ function create() {
     const collisionLayer = map.createLayer('Collision', tileset, 0, 0);
 
     collisionLayer.setCollision([37]);
+        ekey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E); //interagir
 
     // By default, everything gets depth sorted on the screen in the order we created things. Here, we
     // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
@@ -89,6 +95,19 @@ function create() {
         .setScrollFactor(0)
         .setDepth(30);
 
+    ekey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E); //interagir
+
+    obj_clef = this.physics.add.group({                 //Clé
+        key: 'cle',
+        setSize: {width: 50, height: 50},
+        setXY: { x: 1400, y: 700}
+    });
+    obj_porte_ferme = this.physics.add.group({               //porte ferme a clé
+        key: 'porte_ferme',
+        setSize: {width: 50, height: 50},
+        setXY: { x: 1400, y: 800}
+    });
+
     // Debug graphics
     this.input.keyboard.once("keydown-D", event => {
         // Turn on physics debugging to show player's hitbox
@@ -120,9 +139,29 @@ function create() {
 
 }
 
+function collectKey (player, obj_clef)
+{
+    obj_clef.disableBody(true, true);
+    haveKey = true;
+    return haveKey
+}
+function enigmePorte (player, obj_porte_ferme)
+{
+    obj_porte_ferme.disableBody(true, true);
+}
+
 function update(time, delta) {
     const speed = 100;
     const prevVelocity = player.body.velocity.clone();
+
+    if (ekey.isDown)
+    {
+        this.physics.add.overlap(player, obj_clef, collectKey, null, this);       //ramasse la clé avec la touche 'E'
+    }
+    if (ekey.isDown && haveKey)                                                         //ouverture d'une porte avec la cle
+    {
+        this.physics.add.overlap(player, obj_porte_ferme, enigmePorte, null, this);
+    }
 
     // Stop any previous movement from the last frame
     player.body.setVelocity(0);
