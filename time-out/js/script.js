@@ -60,7 +60,9 @@ function create() {
     //.setOffset(0, 0);
 
     player.setBounce(0.2);
-    this.physics.add.collider(player, collisionLayer);
+    this.physics.add.collider(player, collisionLayer, function(player, collisionLayer) {
+        player.setVelocity(1)
+    });
 
     const camera = this.cameras.main;
     this.cameras.main.startFollow(player);
@@ -127,22 +129,9 @@ function update(time, delta) {
     // Normalize and scale the velocity so that player can't move faster along a diagonal
     player.body.velocity.normalize().scale(speed);
 
-    // Update the animation last and give left/right animations precedence over up/down animations
-    if (cursors.left.isDown) {
-        player.anims.play("misa-left-walk", true);
-    } else if (cursors.right.isDown) {
-        player.anims.play("misa-right-walk", true);
-    } else if (cursors.up.isDown) {
-        player.anims.play("misa-back-walk", true);
-    } else if (cursors.down.isDown) {
-        player.anims.play("misa-front-walk", true);
-    } else {
-        player.anims.stop();
-
         // If we were moving, pick and idle frame to use
         if (prevVelocity.x < 0) player.setTexture("player", "player_dos_gauche.png");
         else if (prevVelocity.x > 0) player.setTexture("player", "player_dos_droite.png");
         else if (prevVelocity.y < 0) player.setTexture("player", "player_dos.png");
         else if (prevVelocity.y > 0) player.setTexture("player", "player_face.png");
     }
-}
