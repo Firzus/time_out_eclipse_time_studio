@@ -61,19 +61,21 @@ function create() {
     const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
 
     player = this.physics.add
-        .sprite(spawnPoint.x, spawnPoint.y, "player_face")
+        .sprite(spawnPoint.x, spawnPoint.y, "player")
     //.setSize(0, 0)
     //.setOffset(0, 0);
 
     player.setBounce(0.2);
-    this.physics.add.collider(player, collisionLayer);
+    this.physics.add.collider(player, collisionLayer, function(player, collisionLayer) {
+        player.setVelocity(1)
+    });
 
     const camera = this.cameras.main;
     this.cameras.main.startFollow(player);
     // this.cameras.main.roundPixels = true;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    this.cameras.main.setZoom(3);
+    this.cameras.main.setZoom(2.5);
 
     cursors = this.input.keyboard.createCursorKeys();
 
@@ -147,6 +149,8 @@ function update(time, delta) {
     // Stop any previous movement from the last frame
     player.body.setVelocity(0);
 
+    player.body.setVelocity(0);
+
     // Horizontal movement
     if (cursors.left.isDown) {
         player.body.setVelocityX(-speed);
@@ -164,22 +168,9 @@ function update(time, delta) {
     // Normalize and scale the velocity so that player can't move faster along a diagonal
     player.body.velocity.normalize().scale(speed);
 
-    // Update the animation last and give left/right animations precedence over up/down animations
-    if (cursors.left.isDown) {
-        player.anims.play("misa-left-walk", true);
-    } else if (cursors.right.isDown) {
-        player.anims.play("misa-right-walk", true);
-    } else if (cursors.up.isDown) {
-        player.anims.play("misa-back-walk", true);
-    } else if (cursors.down.isDown) {
-        player.anims.play("misa-front-walk", true);
-    } else {
-        player.anims.stop();
-
         // If we were moving, pick and idle frame to use
         if (prevVelocity.x < 0) player.setTexture("player", "player_dos_gauche.png");
         else if (prevVelocity.x > 0) player.setTexture("player", "player_dos_droite.png");
         else if (prevVelocity.y < 0) player.setTexture("player", "player_dos.png");
         else if (prevVelocity.y > 0) player.setTexture("player", "player_face.png");
     }
-}
