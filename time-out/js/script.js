@@ -14,10 +14,13 @@ var config = {
         preload: preload,
         create: create,
         update: update,
+        render: render
     }
 };
 
 var game = new Phaser.Game(config);
+var timer;
+var total = 0;
 let cursors;
 let player;
 let showDebug = false;
@@ -30,6 +33,8 @@ function preload() {
     this.load.tilemapTiledJSON('test', 'assets/projet_map.json');
 
     this.load.atlas("player", "assets/character/main/image/player.png", "assets/character/main/json/player.json");
+
+    this.load.image('minuteur', 'assets/minuteur/minuteur.png');
 }
 
 function create() {
@@ -60,7 +65,7 @@ function create() {
     //.setOffset(0, 0);
 
     player.setBounce(0.2);
-    this.physics.add.collider(player, collisionLayer, function(player, collisionLayer) {
+    this.physics.add.collider(player, collisionLayer, function (player, collisionLayer) {
         player.setVelocity(1)
     });
 
@@ -101,6 +106,18 @@ function create() {
         });
     });
 
+    this.stage.backgroundColor = '#000';
+
+    //  Create our Timer
+    timer = this.time.create(false);
+
+    //  Set a TimerEvent to occur after 2 seconds
+    timer.loop(2000, updateCounter, this);
+
+    //  Start the timer running - this is important!
+    //  It won't start automatically, allowing you to hook it to button events and the like.
+    timer.start();
+
 }
 
 function update(time, delta) {
@@ -129,9 +146,18 @@ function update(time, delta) {
     // Normalize and scale the velocity so that player can't move faster along a diagonal
     player.body.velocity.normalize().scale(speed);
 
-        // If we were moving, pick and idle frame to use
-        if (prevVelocity.x < 0) player.setTexture("player", "player_dos_gauche.png");
-        else if (prevVelocity.x > 0) player.setTexture("player", "player_dos_droite.png");
-        else if (prevVelocity.y < 0) player.setTexture("player", "player_dos.png");
-        else if (prevVelocity.y > 0) player.setTexture("player", "player_face.png");
-    }
+    // If we were moving, pick and idle frame to use
+    if (prevVelocity.x < 0) player.setTexture("player", "player_dos_gauche.png");
+    else if (prevVelocity.x > 0) player.setTexture("player", "player_dos_droite.png");
+    else if (prevVelocity.y < 0) player.setTexture("player", "player_dos.png");
+    else if (prevVelocity.y > 0) player.setTexture("player", "player_face.png");
+}
+
+function updateCounter() {
+    total++;
+}
+
+function render() {
+    this.debug.text('Time until event: ' + timer.duration.toFixed(0), 32, 32);
+    this.debug.text('Loop Count: ' + total, 32, 64);
+}
