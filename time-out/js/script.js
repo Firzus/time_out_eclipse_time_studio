@@ -45,7 +45,7 @@ function create() {
     const aboveLayer = map.createLayer('Above Player', tileset, 0, 0);
     const collisionLayer = map.createLayer('Collision', tileset, 0, 0);
 
-    worldLayer.setCollisionByExclusion([37]);
+    collisionLayer.setCollision([37]);
 
     // By default, everything gets depth sorted on the screen in the order we created things. Here, we
     // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
