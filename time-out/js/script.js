@@ -127,7 +127,7 @@ function create() {
 
 function update(time, delta) {
 
-    const speed = 175;
+    const speed = 100;
     const prevVelocity = player.body.velocity.clone();
 
     // Stop any previous movement from the last frame
