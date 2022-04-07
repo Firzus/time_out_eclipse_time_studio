@@ -110,6 +110,8 @@ function update(time, delta) {
     // Stop any previous movement from the last frame
     player.body.setVelocity(0);
 
+    player.body.setVelocity(0);
+
     // Horizontal movement
     if (cursors.left.isDown) {
         player.body.setVelocityX(-speed);
