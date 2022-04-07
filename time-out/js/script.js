@@ -53,20 +53,22 @@ function create() {
     // Higher depths will sit on top of lower depth objects.
     aboveLayer.setDepth(10);
 
-    player = this.physics.add.sprite(100, 450, 'player5');
-
     const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
 
-    .sprite(spawnPoint.x, spawnPoint.y, "atlas", "misa-front")
-    .setSize(30, 40)  Régler la taille du personnage
-    .setOffset(0, 24);  Régler la taille du personnage
+    player = this.physics.add
+    .sprite(spawnPoint.x, spawnPoint.y, "player1")
+    //.setSize(100, 40)
+    //.setOffset(0, 24);
 
     player.setBounce(0.2);
     this.physics.add.collider(player, worldLayer);
 
     const camera = this.cameras.main;
-    camera.startFollow(player);
+    this.cameras.main.startFollow(player);
+    // this.cameras.main.roundPixels = true;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+
+    this.cameras.main.setZoom(2);
 
     cursors = this.input.keyboard.createCursorKeys();
 
