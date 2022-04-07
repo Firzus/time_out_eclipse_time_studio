@@ -29,24 +29,23 @@ function preload() {
 
     this.load.tilemapTiledJSON('test', 'assets/projet_map.json');
 
-    for (var i = 1; i<9; i++) {
-        this.load.image('player'+i,"assets/character/main/player"+i+'.png')
-    }
+    this.load.atlas("player", "assets/character/main/image/player.png", "assets/character/main/json/player.json");
 }
 
 function create() {
-    
+
     this.add.sprite(0, 0, 'background', 'bg.png');
 
     const map = this.make.tilemap({ key: 'test' });
 
     const tileset = map.addTilesetImage('asset_map', 'tiles');
 
-    const belowLayer = map.createStaticLayer('Below Player', tileset, 0, 0);
-    const worldLayer = map.createStaticLayer('World', tileset, 0, 0);
-    const aboveLayer = map.createStaticLayer('Above Player', tileset, 0, 0);
+    const belowLayer = map.createLayer('Below Player', tileset, 0, 0);
+    const worldLayer = map.createLayer('World', tileset, 0, 0);
+    const aboveLayer = map.createLayer('Above Player', tileset, 0, 0);
+    const collisionLayer = map.createLayer('Collision', tileset, 0, 0);
 
-    worldLayer.setCollisionByProperty({ collides: true });
+    worldLayer.setCollisionByExclusion([37]);
 
     // By default, everything gets depth sorted on the screen in the order we created things. Here, we
     // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
@@ -56,19 +55,19 @@ function create() {
     const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
 
     player = this.physics.add
-    .sprite(spawnPoint.x, spawnPoint.y, "player1")
-    //.setSize(100, 40)
-    //.setOffset(0, 24);
+        .sprite(spawnPoint.x, spawnPoint.y, "player_face")
+    //.setSize(0, 0)
+    //.setOffset(0, 0);
 
     player.setBounce(0.2);
-    this.physics.add.collider(player, worldLayer);
+    this.physics.add.collider(player, collisionLayer);
 
     const camera = this.cameras.main;
     this.cameras.main.startFollow(player);
     // this.cameras.main.roundPixels = true;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    this.cameras.main.setZoom(2);
+    this.cameras.main.setZoom(3);
 
     cursors = this.input.keyboard.createCursorKeys();
 
@@ -93,95 +92,55 @@ function create() {
             .graphics()
             .setAlpha(0.75)
             .setDepth(20);
-        worldLayer.renderDebug(graphics, {
+        collisionLayer.renderDebug(graphics, {
             tileColor: null, // Color of non-colliding tiles
             collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
             faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
         });
     });
+
 }
 
-function update() {
+function update(time, delta) {
+    const speed = 100;
+    const prevVelocity = player.body.velocity.clone();
 
     // Stop any previous movement from the last frame
     player.body.setVelocity(0);
 
-    if (cursors.left.isDown)                            //Allez a gauche
-    {
-        player.setVelocityY(0);
-        player.setVelocityX(-160);
-        player.setTexture('player3');
-        if (cursors.up.isDown && cursors.left.isDown)
-        {
-            player.setVelocity(-160,-160);
-            player.setTexture('player4');
-        }
-        if (cursors.down.isDown && cursors.left.isDown)
-        {
-            player.setVelocity(-160,160);
-            player.setTexture('player2');
-        }
+    // Horizontal movement
+    if (cursors.left.isDown) {
+        player.body.setVelocityX(-speed);
+    } else if (cursors.right.isDown) {
+        player.body.setVelocityX(speed);
+    }
 
+    // Vertical movement
+    if (cursors.up.isDown) {
+        player.body.setVelocityY(-speed);
+    } else if (cursors.down.isDown) {
+        player.body.setVelocityY(speed);
     }
-    else if (cursors.right.isDown)    //Allez a droite
-    {
-        player.setVelocityY(0);
-        player.setVelocityX(160);
-        player.setTexture('player7');
 
-        if (cursors.up.isDown && cursors.right.isDown)
-        {
-            player.setVelocity(160,-160);
-            player.setTexture('player6');
-        }
-        if (cursors.down.isDown && cursors.right.isDown)
-        {
-            player.setVelocity(160,160);
-            player.setTexture('player8');
-        }
+    // Normalize and scale the velocity so that player can't move faster along a diagonal
+    player.body.velocity.normalize().scale(speed);
 
-    }
-    else if (cursors.up.isDown)   //Allez en haut
-    {
-        player.setVelocityX(0);
-        player.setVelocityY(-160);
-        player.setTexture('player5');
-        if (cursors.up.isDown && cursors.left.isDown)
-        {
-            player.setVelocity(-160,-160);
-            player.setTexture('player2');
-        }
-        if (cursors.up.isDown && cursors.right.isDown)
-        {
-            player.setVelocity(160,-160);
-            player.setTexture('player6');
-        }
-    }
-    else if (cursors.down.isDown)    //Allez en bas
-    {
-        player.setVelocityX(0);
-        player.setVelocityY(160);
-        player.setTexture('player1');
-        if (cursors.down.isDown && cursors.right.isDown)
-        {
-            player.setVelocity(160,160);
-            player.setTexture('player8');
-        }
-        if (cursors.down.isDown && cursors.left.isDown)
-        {
-            player.setVelocity(-160,160);
-            player.setTexture('player2');
-        }
+    // Update the animation last and give left/right animations precedence over up/down animations
+    if (cursors.left.isDown) {
+        player.anims.play("misa-left-walk", true);
+    } else if (cursors.right.isDown) {
+        player.anims.play("misa-right-walk", true);
+    } else if (cursors.up.isDown) {
+        player.anims.play("misa-back-walk", true);
+    } else if (cursors.down.isDown) {
+        player.anims.play("misa-front-walk", true);
+    } else {
+        player.anims.stop();
 
-    }
-    else       //S'arreter (ne rien faire)
-    {
-        player.setVelocityX(0);
-        player.setVelocityY(0);
-    }
-    
-    if (cursors.up.isDown && player.body.touching.down)
-    {
-        player.setVelocityY(-330);
+        // If we were moving, pick and idle frame to use
+        if (prevVelocity.x < 0) player.setTexture("player", "player_gauche");
+        else if (prevVelocity.x > 0) player.setTexture("player", "player_droite");
+        else if (prevVelocity.y < 0) player.setTexture("player", "player_dos");
+        else if (prevVelocity.y > 0) player.setTexture("player", "player_face");
     }
 }
