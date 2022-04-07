@@ -1,4 +1,14 @@
-body {
-    background-color: green;
-    margin: 0;
+html,
+body,
+#game-container {
+  margin: 0;
+  padding: 0;
+}
+
+#game-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100vw;
+  min-height: 100vh;
 }
