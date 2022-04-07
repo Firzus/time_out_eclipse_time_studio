@@ -55,7 +55,7 @@ function create() {
     const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
 
     player = this.physics.add
-        .sprite(spawnPoint.x, spawnPoint.y, "player_face")
+        .sprite(spawnPoint.x, spawnPoint.y, "player")
     //.setSize(0, 0)
     //.setOffset(0, 0);
 
@@ -69,7 +69,7 @@ function create() {
     // this.cameras.main.roundPixels = true;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    this.cameras.main.setZoom(3);
+    this.cameras.main.setZoom(2.5);
 
     cursors = this.input.keyboard.createCursorKeys();
 
