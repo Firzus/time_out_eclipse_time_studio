@@ -1,3 +1,4 @@
+// C'EST PAS MOI QUI l'AI FAIT C MA PETITE SOEUR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 var config = {
     type: Phaser.AUTO,
     width: 1920,
@@ -14,16 +15,18 @@ var config = {
         preload: preload,
         create: create,
         update: update,
-        render: render
+        //render: render
     }
 };
 
 var game = new Phaser.Game(config);
-var timer;
-var total = 0;
+//var timer;
+//var total = 0;
 let cursors;
 let player;
 let showDebug = false;
+this.pause = false;
+this.one = false;
 
 var haveKey; //variable object recupérable
 
@@ -36,13 +39,15 @@ function preload() {
 
     this.load.atlas("player", "assets/character/main/image/player.png", "assets/character/main/json/player.json");
     
-    this.load.image('minuteur', 'assets/minuteur/minuteur.png');
+    //this.load.image('minuteur', 'assets/minuteur/minuteur.png');
 
     this.load.image('cle', 'assets/props/Cle_blanche.png');         //objet recupérable
     this.load.image('porte_ferme', 'assets/props/porte_ferme.png');     //porte ferme a clé
 }
 
 function create() {
+
+    pkey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.P); //Pause
 
     this.add.sprite(0, 0, 'background', 'bg.png');
 
@@ -80,7 +85,7 @@ function create() {
     // this.cameras.main.roundPixels = true;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    this.cameras.main.setZoom(2.5);
+    this.cameras.main.setZoom(1);
 
     cursors = this.input.keyboard.createCursorKeys();
 
@@ -125,10 +130,11 @@ function create() {
         });
     });
 
-    this.stage.backgroundColor = '#000';
+    /*
+    game.stage.backgroundColor = '#000';
 
     //  Create our Timer
-    timer = this.time.create(false);
+    timer = game.time.create(false);
 
     //  Set a TimerEvent to occur after 2 seconds
     timer.loop(2000, updateCounter, this);
@@ -136,7 +142,7 @@ function create() {
     //  Start the timer running - this is important!
     //  It won't start automatically, allowing you to hook it to button events and the like.
     timer.start();
-
+    */
 }
 
 function collectKey (player, obj_clef)
@@ -190,13 +196,26 @@ function update(time, delta) {
     else if (prevVelocity.x > 0) player.setTexture("player", "player_dos_droite.png");
     else if (prevVelocity.y < 0) player.setTexture("player", "player_dos.png");
     else if (prevVelocity.y > 0) player.setTexture("player", "player_face.png");
-}
+    
+    // Pause
+    if(pkey.isDown) {
+        this.pause = !this.pause;
+        this.one = true;
+        this.add.text(700, 300, 'PAUSE', { font: "35px Arial Black"   });
+    }
 
+    if(this.pause){
+        game.input.onDown.addOnce(removeText, this);
+        return;
+    }
+}
+/*
 function updateCounter() {
     total++;
 }
 
 function render() {
-    this.debug.text('Time until event: ' + timer.duration.toFixed(0), 32, 32);
-    this.debug.text('Loop Count: ' + total, 32, 64);
+    game.debug.text('Time until event: ' + timer.duration.toFixed(0), 32, 32);
+    game.debug.text('Loop Count: ' + total, 32, 64);
 }
+*/
