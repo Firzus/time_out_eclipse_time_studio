@@ -85,7 +85,7 @@ function create() {
     // this.cameras.main.roundPixels = true;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    this.cameras.main.setZoom(1);
+    this.cameras.main.setZoom(2.5);
 
     cursors = this.input.keyboard.createCursorKeys();
 
