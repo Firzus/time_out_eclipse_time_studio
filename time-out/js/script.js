@@ -85,7 +85,7 @@ function create() {
     // this.cameras.main.roundPixels = true;
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    this.cameras.main.setZoom(2.5);
+    this.cameras.main.setZoom(1);
 
     cursors = this.input.keyboard.createCursorKeys();
 
@@ -105,12 +105,12 @@ function create() {
     obj_clef = this.physics.add.group({                 //Clé
         key: 'cle',
         setSize: {width: 50, height: 50},
-        setXY: { x: 1400, y: 700}
+        setXY: { x: 1220, y: 730}
     });
     obj_porte_ferme = this.physics.add.group({               //porte ferme a clé
         key: 'porte_ferme',
         setSize: {width: 50, height: 50},
-        setXY: { x: 1400, y: 800}
+        setXY: { x: 900, y: 360}
     });
 
     // Debug graphics
